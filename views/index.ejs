@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+  	<div id='test' style='display:none;'>测试div</div>
+  	<div id="info" style="position:fixed;top:0px;width:1000px;margin:20px;margin-top:0px;text-align:center;background-color:#999999;color:red;z-index:10001"></div>
+	<div style="top:0px;width:1000px;margin:20px;">
+		监测url:<input type="text" id="url" class="form-control" placeholder="输入要检查的地址：例如http://www.baidu.com" style="width:500px;font-family:Consolas;"/>
+		<input type='text' id='selector' class='form-control' placeholder='输入要点击的selector' />
+		显示请求URL：<input type="checkbox" id="checkbox">&nbsp;&nbsp;&nbsp;&nbsp;<button id="sub" type="button" class="btn btn-primary" disabled='disabled'  data-toggle='执行查询...'>提交</button>
+	</div>
+	<div style="width:1000px;overflow:hidden;margin:20px;" id="main">
+	</div>
+  	<script>
+  	function bling(element,html){
+  		var colors=['blue','green','red'];
+  		element.html(html);
+  		var i=0;
+  		var inter=setInterval(function(){
+  			element.css('color',colors[i/3]);
+  			i++;
+  			if(i===9){
+  				clearInterval(inter);
+  				/*
+  				setTimeout(function(){
+  					element.html("");
+  				}, 3000);
+				*/
+  			}
+  		},200);
+  	}
+	  	function buildInfoFromData(data){
+	  		var url=data.url;
+	  		var reqHeader=data.req.headers;
+	  		var resHeader=data.res.headers;
+	  		var reqHeaderStr="<b>Request Header:</b><br/>";
+	  		var resHeaderStr="<b>Response Header:</b><br/>";
+	  		for(var k in reqHeader){
+	  			var v=reqHeader[k];
+	  			reqHeaderStr+=v.name.toUpperCase()+":<span style='font-family:Consolas;color:#666666;font-size:12px;'>"+v.value+"</span><br/>";
+	  		}
+	  		for(var k in resHeader){
+	  			var v=resHeader[k];
+	  			resHeaderStr+=v.name.toUpperCase()+":<span style='font-family:Consolas;color:#666666;font-size:12px;'>"+v.value+"</span><br/>";
+	  		}
+	  		return "<p style='word-wrap:break-word;'>URL:<span style='font-family:Consolas;color:#666666;font-size:12px;'>"+data.url+"</span></br>"+reqHeaderStr+"<br/>"+resHeaderStr+"</p>";
+	  	}
+  		function genUrl(data){
+  			if(data && data.url){
+	  			var url=data.url
+	  			var maxLength=100;
+	  			var urlDiv=$('<div/>').html(url.substr(0,url.length>maxLength?maxLength:url.length));
+	  			urlDiv.css({width:'1000px','font-size':15,'border-bottom':'solid 1px black','padding-left':5,'padding-right':5});
+
+	  			$(urlDiv).on('click',function(event){
+	  				if(event.ctrlKey){
+						if($(this).attr('data')==1){
+		  					$(this).html(url.substr(0,url.length>maxLength?maxLength:url.length)).attr('data','2').css({'background-color':'#FFFFFF'});
+		  				}else{
+		  					$(this).attr('data','1').html(buildInfoFromData(data)).css({'background-color':'#9AFF9A'});
+		  				}
+		  				event.preventDefault();
+	  				}
+	  			});
+	  			
+	  			$('#main').append(urlDiv);
+	  		}else{
+	  			console.log(data);
+	  		}
+  		}
+  		function socket(){
+  		  var socket = io.connect('http://10.1.2.66');
+		  socket.on('connected', function (data) {
+		  	$('#sub').button('reset');
+		    console.log(data);
+		    $('#sub').attr('disabled',false);
+		  });
+		  socket.on('finish',function(data){
+		  	$('#sub').button('reset');
+		  	//$('#info').html('URL:'+data.url+" has finished check.")
+		  	bling($('#info'),'URL:'+data.url+" has finished check.");
+		  });
+		  socket.on('click',function(data){
+		  	//$('#info').html('Element:'+data.ele+" is clicked.")
+		  	bling($('#info'),'Element:'+data.ele+" is clicked.");
+		  });
+		  socket.on('res',function(data){
+		  	genUrl(data);
+		  });
+
+		  $('#sub').on('click',function(){
+		  	$('#sub').button('loading');
+		  	$('#main').html('');
+		  	socket.emit('query',{url:$('#url').val(),selector:$('#selector').val()});
+		  });
+		}
+
+		$(function(){
+			socket();
+			$(window).keydown(function (e) {
+			    if (e.keyCode == 116) {
+				    if (!confirm("刷新清除记录，确定要刷新吗？")) {
+				    	e.preventDefault();
+				    }
+			    }
+			});
+		})
+  	</script>
+ <script>
+ (function(a,b,c,d){a[c]=function(){a[c]['ar']=a[c]['ar']||[];a[c]['ar'].push(arguments);};
+ var s=b.createElement('script');s.async = 1;s.src='//localhost/javascripts/test.js';
+
+
+ var r=b.getElementsByTagName('script')[0];r.parentNode.insertBefore(s,r);
+ })(window,document,'_agtjs','script');
+
+for(var i=0 ;i<10000;i++){
+	console.log('Main:'+new Date().getTime());
+}
+
+
+</script>
+
+
+  </body>
+</html>

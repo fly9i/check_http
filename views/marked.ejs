@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>test</title>
+    <!--link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet"-->
+	<!--link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet"-->
+    <link rel="stylesheet" type="text/css" href="/stylesheets/googlecode.css">
+    <script src="/javascripts/highlight.min.js"></script>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <script src="/javascripts/jquery-1.11.0.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      hljs.initHighlightingOnLoad();
+    </script>
+    <style type="text/css">
+        code{
+            display: inline-block;
+            word-wrap:break-all;
+            font-family: 'Consolas';
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='row'>
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+                    <button type="button" id="but" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <span class="navbar-brand" id='brand'>我的文档</span>
+                </div>
+                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                      <% for(var i in files){%>
+                                <li><a href="javascript:;" class="mdlink<%= i==0?' active':'' %>" ><%= files[i] %></a></li>
+                                <% }%>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="col-md-12 markdown" >
+                <%- mk %>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    $(function(){
+        $('.mdlink').on('click',function(e){
+            $('#brand').html($(this).html());            
+        });
+    });
+       
+    </script>
+</body>
+</html>
