@@ -24,7 +24,7 @@ html页面简单嵌入按钮点击代码后：
 
 		 _agtjs('loadEvent',{atsev:102,atssrv:function(){return document.getElementById('asd').innerHTML}}); 
 
-		 _agtjs('clickEvent','#id .class(5) name[5]' handle,'');
+		 _agtjs('clickEvent','#id .class(5) name[5]','');
 		 _agtjs('trackPv');
 		 _agtjs('trackCm');
 		</script>
@@ -35,13 +35,17 @@ html页面简单嵌入按钮点击代码后：
 如上述，_agtjs() 函数，第一个参数为需要追踪的事件类型，之后为事件的各参数，支持的事件：
 
 1. loadEvent(params,filter)
+ * __params__  （必须）*类型:* Json对象，*key*:参数名，*value*：为传入的参数值，可以为一数值，也可为一有返回值的函数；
+ * __filter__ （非必须）*类型:* 字符串或正则表达式，*描述：*当前页面url包含该参数或匹配该参数时进行发送
 
-	params  *类型*：Json对象，*key*:参数名，*value*：为传入的参数值，可以为一数值，也可为一有返回值的函数；
-	filter:类型与当前页面url进行比较
-
-2. clickEvent:
-3. trackPv
-4. trackCm
+2. clickEvent(selector,param,filter):
+ * __selector__
+ * __param__
+ * __filter__ 
+3. trackPv():
+ * (无参数)，追踪pv函数
+4. trackCm(cmtype[,cmtype][,cmtype]):
+ * __cmtype__（非必须）该参数值可以为cmbaidu，cmadx，cmtanx中的一个
 
 
 两种方式：
